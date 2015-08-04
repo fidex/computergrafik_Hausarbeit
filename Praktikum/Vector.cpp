@@ -26,6 +26,8 @@ float Vector::dot(const Vector& v) const {
     return (this->X*v.X)+(this->Y*v.Y)+(this->Z*v.Z);
 }
 
-
+Vector& Vector::normalize(){
+    
+}
 
 
