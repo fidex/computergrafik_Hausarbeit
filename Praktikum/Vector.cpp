@@ -75,7 +75,6 @@ Vector Vector::operator*(float c) const {
 
 Vector Vector::reflection(const Vector& normal) const {
     Vector refl;
-    normal.normalize();
     refl = *this - (normal*2.0*this->dot(normal));
     return refl;
 }
