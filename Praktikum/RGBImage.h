@@ -23,12 +23,15 @@ public:
     unsigned int height() const;
     friend void swap(RGBImage& first, RGBImage& second);
 
-    static unsigned char convertColorChannel(float f);
+    static unsigned char convertColorChannel(float f){
+        if (f > 1.0) return (unsigned char)255;
+        if (f < 0.0) return (unsigned char)0;
+        return (unsigned char)(f * 255.0);
+    }
 protected:
     Color* m_Image;
     unsigned int m_Height;
     unsigned int m_Width;
-
 };
 
 #endif	/* RGBIMAGE_H */

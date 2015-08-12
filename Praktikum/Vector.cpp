@@ -48,6 +48,12 @@ Vector Vector::operator+(const Vector& v) const {
     return tmp += v;
 }
 
+
+Vector Vector::operator-() const {
+    Vector tmp(-this->X, -this->Y, -this->Z);
+    return tmp;
+}
+
 Vector Vector::operator-(const Vector& v) const {
     Vector tmp(*this);
     return tmp -= v;
@@ -80,5 +86,19 @@ Vector Vector::reflection(const Vector& normal) const {
 }
 
 bool Vector::triangleIntersection(const Vector& d, const Vector& a, const Vector& b, const Vector& c, float& s) const {
+    Vector n = (b-a).cross(c-a).normalize();
+    float distance = n.dot(a);
     
+    if(n.dot(d) == 0) return false;
+    
+    s = (distance-n.dot(*this))/n.dot(d);
+    if(s < 0) return false;
+    
+    Vector p = (*this) + d*s;
+    float surfaceMin = ((b-a).cross((c-a))).length()/2;
+    float surface = ((a-p).cross(b-p)).length()/2 +
+                    ((c-p).cross(b-p)).length()/2 +
+                    ((a-p).cross(c-p)).length()/2;
+    float e = 1e-6f;
+    return surface <= surfaceMin+e;
 }
