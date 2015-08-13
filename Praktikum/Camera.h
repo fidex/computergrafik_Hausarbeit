@@ -16,7 +16,7 @@ public:
     Vector generateRay(unsigned int x, unsigned int y) const;
     Vector Position() const;
 private:
-    Vector eyepoint;
+    float zvalue;
     float planedist;
     float width;
     float height;
