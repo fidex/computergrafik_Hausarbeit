@@ -12,6 +12,21 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>Camera.cpp</itemPath>
+      <itemPath>Camera.h</itemPath>
+      <itemPath>Color.cpp</itemPath>
+      <itemPath>Color.h</itemPath>
+      <itemPath>Makefile</itemPath>
+      <itemPath>Material.cpp</itemPath>
+      <itemPath>Material.h</itemPath>
+      <itemPath>Model.cpp</itemPath>
+      <itemPath>Model.h</itemPath>
+      <itemPath>Texture.cpp</itemPath>
+      <itemPath>Texture.h</itemPath>
+      <itemPath>Vector.cpp</itemPath>
+      <itemPath>Vector.h</itemPath>
+      <itemPath>computergrafik_Hausarbeit-master.zip</itemPath>
+      <itemPath>figure.obj</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -27,7 +42,7 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>oldFiles</Elem>
+    <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -38,7 +53,48 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerOptionItem>-lGL</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-lGLU</linkerOptionItem>
+            <linkerOptionItem>-lglut</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
+      <item path="Camera.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Camera.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Color.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Material.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Material.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Model.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Model.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Texture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Texture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Vector.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Vector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="computergrafik_Hausarbeit-master.zip"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="figure.obj" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -62,6 +118,39 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Camera.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Camera.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Color.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Material.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Material.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Model.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Model.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Texture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Texture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Vector.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Vector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="computergrafik_Hausarbeit-master.zip"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="figure.obj" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>

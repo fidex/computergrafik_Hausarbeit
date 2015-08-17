@@ -35,6 +35,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Camera.o \
+	${OBJECTDIR}/Color.o \
+	${OBJECTDIR}/Material.o \
+	${OBJECTDIR}/Model.o \
+	${OBJECTDIR}/Texture.o \
+	${OBJECTDIR}/Vector.o \
 	${OBJECTDIR}/main.o
 
 
@@ -52,7 +58,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-lGL -lpthread -lGLU -lglut
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -61,6 +67,36 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/computergrafik_hausarbeit: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/computergrafik_hausarbeit ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/Camera.o: Camera.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Camera.o Camera.cpp
+
+${OBJECTDIR}/Color.o: Color.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Color.o Color.cpp
+
+${OBJECTDIR}/Material.o: Material.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Material.o Material.cpp
+
+${OBJECTDIR}/Model.o: Model.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Model.o Model.cpp
+
+${OBJECTDIR}/Texture.o: Texture.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Texture.o Texture.cpp
+
+${OBJECTDIR}/Vector.o: Vector.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Vector.o Vector.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
