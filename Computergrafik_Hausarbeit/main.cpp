@@ -34,6 +34,7 @@ int g_MouseState = 0;
 
 void SetupDefaultGLSettings();
 void DrawScene();
+void drawLineTest(Vector v,Vector v2);
 void MouseCallback(int Button, int State, int x, int y);
 void MouseMoveCallback(int x, int y);
 void KeyboardCallback( unsigned char key, int x, int y);
@@ -72,7 +73,7 @@ int main(int argc, char * argv[])
 
 void SetupDefaultGLSettings()
 {
-    glClearColor(0, 0, 0, 255);
+    glClearColor(0, 0, 0, 200);
     glClearDepth(1.0f);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -163,6 +164,11 @@ void DrawScene()
     
     DrawGroundGrid();
     
+    /* tests*/
+    Vector v = Vector(1.0f,1.0f,1.0f);
+    Vector v2 = Vector(2.0f,2.0f,3.0f);
+    drawLineTest(v,v2);
+    
     GLfloat lpos[4];
     lpos[0]=g_LightPos.X; lpos[1]=g_LightPos.Y; lpos[2]=g_LightPos.Z; lpos[3]=1;
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
@@ -178,6 +184,19 @@ void DrawScene()
     
     glutSwapBuffers();
     glutPostRedisplay();
+    
+}
+void drawLineTest(Vector v1,Vector v2){
+    glDisable( GL_LIGHTING);
+    glBegin(GL_LINES);
+        glColor3f(1.0f, 0.0f, 0.0f);        
+        
+            glVertex3f(v1.X, v1.Z, v1.Y);
+            glVertex3f(v2.X, v2.Z, v2.Y);       
+        
+    glEnd();
+    glEnable( GL_LIGHTING);
+    
     
 }
 
