@@ -204,16 +204,12 @@ void drawLineTest(Vector v1,Vector v2){
 }
 void drawTriangleTest(Vector v1, Vector v2, Vector v3){
     glDisable( GL_LIGHTING);
-    glBegin(GL_LINES);
+    glBegin(GL_TRIANGLES);
         glColor3f(1.0f, 0.0f, 0.0f);        
         
             glVertex3f(v1.X, v1.Z, v1.Y);
             glVertex3f(v2.X, v2.Z, v2.Y);
-            glVertex3f(v3.X, v3.Z, v3.Y);
-            glVertex3f(v1.X, v1.Z, v1.Y);
-            glVertex3f(v2.X, v2.Z, v2.Y);
-            glVertex3f(v3.X, v3.Z, v3.Y);
-           
+            glVertex3f(v3.X, v3.Z, v3.Y);           
         
     glEnd();
     glEnable( GL_LIGHTING);
