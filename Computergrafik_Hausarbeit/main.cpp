@@ -35,6 +35,7 @@ int g_MouseState = 0;
 void SetupDefaultGLSettings();
 void DrawScene();
 void drawLineTest(Vector v,Vector v2);
+void drawTriangleTest(Vector v1, Vector v2, Vector v3);
 void MouseCallback(int Button, int State, int x, int y);
 void MouseMoveCallback(int x, int y);
 void KeyboardCallback( unsigned char key, int x, int y);
@@ -169,6 +170,8 @@ void DrawScene()
     Vector v2 = Vector(2.0f,2.0f,3.0f);
     drawLineTest(v,v2);
     
+    drawTriangleTest(Vector(1.0f,1.0f,1.0f),Vector(2.0f,2.0f,2.0f), Vector(3.0f,2.0f,3.0f));
+    
     GLfloat lpos[4];
     lpos[0]=g_LightPos.X; lpos[1]=g_LightPos.Y; lpos[2]=g_LightPos.Z; lpos[3]=1;
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
@@ -189,7 +192,7 @@ void DrawScene()
 void drawLineTest(Vector v1,Vector v2){
     glDisable( GL_LIGHTING);
     glBegin(GL_LINES);
-        glColor3f(1.0f, 0.0f, 0.0f);        
+        glColor3f(1.0f, 1.0f, 0.0f);        
         
             glVertex3f(v1.X, v1.Z, v1.Y);
             glVertex3f(v2.X, v2.Z, v2.Y);       
@@ -198,6 +201,22 @@ void drawLineTest(Vector v1,Vector v2){
     glEnable( GL_LIGHTING);
     
     
+}
+void drawTriangleTest(Vector v1, Vector v2, Vector v3){
+    glDisable( GL_LIGHTING);
+    glBegin(GL_LINES);
+        glColor3f(1.0f, 0.0f, 0.0f);        
+        
+            glVertex3f(v1.X, v1.Z, v1.Y);
+            glVertex3f(v2.X, v2.Z, v2.Y);
+            glVertex3f(v3.X, v3.Z, v3.Y);
+            glVertex3f(v1.X, v1.Z, v1.Y);
+            glVertex3f(v2.X, v2.Z, v2.Y);
+            glVertex3f(v3.X, v3.Z, v3.Y);
+           
+        
+    glEnd();
+    glEnable( GL_LIGHTING);
 }
 
 void junk() {
