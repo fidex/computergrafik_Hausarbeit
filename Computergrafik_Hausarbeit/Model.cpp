@@ -10,11 +10,14 @@
 
 #include "Model.h"
 #include <vector>
+#include <fstream>
 #include <assert.h>
 #include <math.h>
 #include <map>
 #include <float.h>
 #include <cstdio>
+#include <cstring>
+#include <sstream>
 
 
 Vertex::Vertex()
@@ -52,8 +55,87 @@ Model::~Model()
 
 bool Model::load( const char* Filename, bool FitSize)
 {
-    createCube();
-    return true;
+    std::ifstream file(Filename);
+    std::string line;
+    
+    struct UVCoord{
+        float s,t;
+    };
+    
+    struct Face{
+        int vindex, uvindex, nindex;
+    };
+    
+    std::vector<Vector> vertices;
+    std::vector<UVCoord> uvs;
+    std::vector<Vector> normals;
+    std::vector<Face> faces;
+    
+    char type[3] = "aa";
+    while(std::getline(file,line)){  //read line 
+        
+        sscanf(line.c_str(), "%s ", type);
+        
+        if(!strcmp(type, "v")){
+            std::cout << "Vertex!" << std::endl;
+            float x;
+            float y;
+            float z;
+            sscanf(line.c_str(), "%*s %f %f %f",&x,&y,&z);
+            Vector v(x, y, z);
+            vertices.push_back(v);
+        }
+        else if(!strcmp(type, "vt")){
+            std::cout << "UV!" << std::endl;
+            float s;
+            float t;
+
+            sscanf(line.c_str(), "%*s %f %f",&s,&t);
+            UVCoord uv;
+            uv.s = s;
+            uv.t = t;
+            uvs.push_back(uv);
+        }
+        else if(!strcmp(type, "vn")){
+            std::cout << "Normal!" << std::endl;
+            float x;
+            float y;
+            float z;
+            
+            sscanf(line.c_str(), "%*s %f %f %f",&x,&y,&z);
+            Vector v(x, y, z);
+            normals.push_back(v);
+        }
+        else if(!strcmp(type, "f")){
+            std::cout << "Face!" << std::endl;
+            
+            //Expect max 4 values
+            std::stringstream ssline(line);
+            std::vector<std::string> values;
+            std::string substr;
+            getline( ssline, substr, ' ' );         //Remove Prefix
+            while(ssline.good()){
+                getline( ssline, substr, ' ' );
+                values.push_back( substr );
+            }
+            //{1/2/1 2//5 3}
+            
+            
+            
+            if(values.size() > 3){  //Convert quads to triangles
+                std::cout << "Face with 4!" << std::endl;
+            
+            
+            
+            }else{
+                std::cout << "Face with less than 4!" << std::endl;
+            }
+        }
+    }
+    
+    
+    //createCube();
+    //return true;
 }
 
 void Model::createCube()
