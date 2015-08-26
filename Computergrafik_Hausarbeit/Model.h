@@ -42,14 +42,15 @@ public:
     Model();
     ~Model();
     const BoundingBox& boundingBox() const;
-    bool load( const char* Filename, bool FitSize=true);
+    bool loadOBJ( const char* Filename, bool FitSize=true);
     void drawLines() const;
     void drawTriangles() const;
 protected:
     void createCube();
-    Material* m_pMaterials;
+    void loadMTL(const char* filename);
+    std::vector<Material> m_pMaterials;
     unsigned int m_MaterialCount;
-    Vertex* m_pVertices;
+    std::vector<Vertex> m_pVertices;
     unsigned int m_VertexCount;
     BoundingBox m_Box;
 };
