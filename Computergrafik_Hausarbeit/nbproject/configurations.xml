@@ -19,8 +19,12 @@
       <itemPath>Makefile</itemPath>
       <itemPath>Material.cpp</itemPath>
       <itemPath>Material.h</itemPath>
+      <itemPath>Matrix.cpp</itemPath>
+      <itemPath>Matrix.h</itemPath>
       <itemPath>Model.cpp</itemPath>
       <itemPath>Model.h</itemPath>
+      <itemPath>ShaderProgram.cpp</itemPath>
+      <itemPath>ShaderProgram.h</itemPath>
       <itemPath>Texture.cpp</itemPath>
       <itemPath>Texture.h</itemPath>
       <itemPath>Vector.cpp</itemPath>
@@ -53,12 +57,17 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <ccTool>
+          <standard>8</standard>
+        </ccTool>
         <linkerTool>
           <linkerLibItems>
             <linkerOptionItem>-lGL</linkerOptionItem>
             <linkerOptionItem>-lpthread</linkerOptionItem>
             <linkerOptionItem>-lGLU</linkerOptionItem>
             <linkerOptionItem>-lglut</linkerOptionItem>
+            <linkerOptionItem>-lGLEW</linkerOptionItem>
+            <linkerOptionItem>-pthread</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -76,9 +85,17 @@
       </item>
       <item path="Material.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Matrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Matrix.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Model.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Model.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ShaderProgram.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ShaderProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Texture.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -132,9 +149,17 @@
       </item>
       <item path="Material.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Matrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Matrix.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Model.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Model.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ShaderProgram.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ShaderProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Texture.cpp" ex="false" tool="1" flavor2="0">
       </item>

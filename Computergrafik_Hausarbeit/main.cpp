@@ -5,7 +5,7 @@
 //  Created by Philipp Lensing on 22.10.14.
 //  Copyright (c) 2014 Philipp Lensing. All rights reserved.
 //
-
+#include <GL/glew.h>
 #include <GL/glut.h>
 #include <iostream>
 #include <math.h>
@@ -13,6 +13,8 @@
 #include "Model.h"
 #include "Texture.h"
 #include <pthread.h>
+
+#include "ShaderProgram.h"
 
 // Model that should be loaded
 const char* g_ModelToLoad = "figure.obj";
@@ -23,6 +25,9 @@ const unsigned int g_WindowHeight=480;
 
 // light position (point light)
 const Vector g_LightPos = Vector( 0,4,0);
+
+std::string g_path("/home/fide/NetBeansProjects/Computergrafik/computergrafik_Hausarbeit/Computergrafik_Hausarbeit/texture/");
+ShaderProgram g_Shader;
 
 
 
@@ -58,14 +63,24 @@ int main(int argc, char * argv[])
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutCreateWindow("CG Praktikum");
     
+    GLenum err = glewInit();
+    if(GLEW_OK != err){
+        std::cout << "Glew Failed" << std::endl;
+    }
+            
+    
     SetupDefaultGLSettings();
     
     glutDisplayFunc(DrawScene);
     glutMouseFunc(MouseCallback);
     glutKeyboardFunc(KeyboardCallback);
     glutMotionFunc(MouseMoveCallback);
+    
+    ShaderProgram g_Shader;
+    g_Shader.load((g_path+"toon.vert").c_str(), (g_path+"toon.frag").c_str());
+    g_Shader.activate();
 
-    g_Model.load(g_ModelToLoad);
+    g_Model.loadOBJ(g_ModelToLoad);
     
     glutMainLoop();
     

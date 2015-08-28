@@ -38,7 +38,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/Camera.o \
 	${OBJECTDIR}/Color.o \
 	${OBJECTDIR}/Material.o \
+	${OBJECTDIR}/Matrix.o \
 	${OBJECTDIR}/Model.o \
+	${OBJECTDIR}/ShaderProgram.o \
 	${OBJECTDIR}/Texture.o \
 	${OBJECTDIR}/Vector.o \
 	${OBJECTDIR}/main.o
@@ -83,10 +85,20 @@ ${OBJECTDIR}/Material.o: Material.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Material.o Material.cpp
 
+${OBJECTDIR}/Matrix.o: Matrix.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Matrix.o Matrix.cpp
+
 ${OBJECTDIR}/Model.o: Model.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Model.o Model.cpp
+
+${OBJECTDIR}/ShaderProgram.o: ShaderProgram.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderProgram.o ShaderProgram.cpp
 
 ${OBJECTDIR}/Texture.o: Texture.cpp 
 	${MKDIR} -p ${OBJECTDIR}
