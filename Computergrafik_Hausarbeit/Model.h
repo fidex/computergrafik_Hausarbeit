@@ -25,6 +25,7 @@ struct Vertex
     Vector Normal;
     float  TexcoordS;
     float  TexcoordT;
+    bool operator==(Vertex* const v);
 };
 
 class BoundingBox
@@ -52,7 +53,9 @@ protected:
     std::vector<Material> m_pMaterials;
     unsigned int m_MaterialCount;
     std::vector<Vertex> m_pVertices;
+    std::vector<Vertex> m_pIndices;
     unsigned int m_VertexCount;
+    unsigned int m_IndexCount;
     GLuint vertexbuffer = 0;
     GLuint indexbuffer = 0;
     BoundingBox m_Box;

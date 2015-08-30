@@ -9,7 +9,9 @@
 #include <GL/glut.h>
 
 #include "Model.h"
+#include <algorithm>
 #include <vector>
+#include <unordered_set>
 #include <fstream>
 #include <assert.h>
 #include <math.h>
@@ -34,6 +36,17 @@ Vertex::Vertex( const Vector& p, const Vector& n, float TexS, float TexT)
     TexcoordS = TexS;
     TexcoordT = TexT;
 }
+
+bool Vertex::operator==(Vertex* const v) {
+    if(this->Normal == v->Normal)
+    if(this->Position == v->Position)
+    if(this->TexcoordS == v->TexcoordS)
+    if(this->TexcoordT == v->TexcoordT)
+        return true;
+    
+    return false;
+}
+
 
 BoundingBox::BoundingBox()
 {
@@ -146,7 +159,32 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
         
     } //File processed
     
-    
+    //Testkram für indexing
+    std::vector<Vertex> out_vertices;
+    std::vector<GLuint> out_indices;
+    for(int i=0; i<faces.size(); i++){
+        
+        for(int j=0; j < 3;j++){
+            Vertex v;
+            int index;
+            
+            v.Position = vertices[faces[i].vindex[j]-1];
+            v.Normal = normals[faces[i].nindex[j]-1];               //Segfault
+            v.TexcoordS = uvs[faces[i].uvindex[j]-1].s;
+            v.TexcoordT = uvs[faces[i].uvindex[j]-1].t;
+            
+            index = std::find(out_vertices.begin(), out_vertices.end(), &v) - out_vertices.begin();
+            if(index == out_vertices.size()-1){
+                std::cout << "Vertex not found, creating at index " << index << std::endl;
+                out_vertices.push_back(v);
+            }else{
+                std::cout << "Vertex found at index " << index << std::endl;
+            }
+            out_indices.push_back(index);
+            std::cout << "" << std::endl;
+        }
+        
+    }
     
     
     //createCube();
