@@ -47,11 +47,14 @@ public:
     void drawTriangles() const;
 protected:
     void createCube();
+    void parseFaceVertex(std::string &line, GLuint *v, GLuint *vt, GLuint *vn);
     void loadMTL(const char* filename);
     std::vector<Material> m_pMaterials;
     unsigned int m_MaterialCount;
     std::vector<Vertex> m_pVertices;
     unsigned int m_VertexCount;
+    GLuint vertexbuffer = 0;
+    GLuint indexbuffer = 0;
     BoundingBox m_Box;
 };
 

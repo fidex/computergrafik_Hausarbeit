@@ -19,6 +19,8 @@
 #include <cstring>
 #include <sstream>
 
+#define toDigit(c) (c-'0')
+
 
 Vertex::Vertex()
 {
@@ -58,13 +60,17 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     };
     
     struct Face{
-        int vindex[3], uvindex[3], nindex[3];
+        GLuint vindex[3], uvindex[3], nindex[3];
+        std::string matname;
     };
     
     std::vector<Vector> vertices;
     std::vector<UVCoord> uvs;
     std::vector<Vector> normals;
     std::vector<Face> faces;
+    
+    std::string currentMat = "";
+    
     
     char type[7] = "aa";
     while(std::getline(file,line)){  //read line 
@@ -106,6 +112,12 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             sscanf(line.c_str(), "%*s %s", filename);
             loadMTL(filename);
         }
+        else if(!strcmp(type, "usemtl")){
+            char matname[255];
+            sscanf(line.c_str(), "%*s %s", matname);
+            currentMat = matname;
+            std::cout << "Using mat: " << currentMat << std::endl;
+        }
         else if(!strcmp(type, "f")){
             //std::cout << "Face!" << std::endl;
             
@@ -114,44 +126,62 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             std::vector<std::string> values;
             std::string substr;
             getline( ssline, substr, ' ' );         //Remove Prefix
-            while(ssline.good()){
+            while(ssline.good()){                   //Split Vertices
                 getline( ssline, substr, ' ' );
                 values.push_back( substr );
             }
             //{1/2/1 2//5 3}
             
-            if(values.size() > 3){  //Convert quads to triangles
-                //std::cout << "Face with 4!" << std::endl;
-                for(int i=1; i<(values.size()-1); i++){
-                    Face f;
-                    f.vindex[0] = values[0][0];
-                    f.vindex[1] = values[i][0];
-                    f.vindex[2] = values[i+1][0];
-                    faces.push_back(f);
-                }
-            
-            
-            }else{
-                //std::cout << "Face with less than 4!" << std::endl;
-                int i = 0;
+
+            for(int i=1; i<(values.size()-1); i++){     //Convert xs to Triangles
                 Face f;
-                for(std::string val:values){
-                    f.vindex[i] = val[0];
-                    //TODO: Read other values with stringmagic
-                    
-                    i++;
-                }
+                parseFaceVertex(values[0], &f.vindex[0], &f.uvindex[0], &f.nindex[0]);
+                parseFaceVertex(values[i], &f.vindex[1], &f.uvindex[1], &f.nindex[1]);
+                parseFaceVertex(values[i+1], &f.vindex[2], &f.uvindex[2], &f.nindex[2]);
+                f.matname = currentMat;
                 faces.push_back(f);
             }
-            
+
         }
         
     } //File processed
     
     
     
+    
     //createCube();
     //return true;
+}
+
+void Model::parseFaceVertex(std::string &values, GLuint *v, GLuint *vt, GLuint *vn){  
+    std::stringstream ss(values);
+    
+    std::string s_v;
+    std::string s_vt;
+    std::string s_vn;
+
+    getline(ss, s_v, '/');
+    std::istringstream ( s_v ) >> *v;
+
+    getline(ss, s_vt, '/');
+    if(s_vt.compare("") != 0){
+        std::istringstream ( s_vt ) >> *vt;
+    }
+    else{
+        *vt = 0;
+    }
+
+    getline(ss, s_vn, '/');
+    if(s_vn.compare("") != 0){
+        std::istringstream ( s_vn ) >> *vn;
+    }
+    else{
+        *vn = 0;
+    }
+//    std::cout << "Face Vertex:" << std::endl;
+//    std::cout << "Pos: " << *v << std::endl;
+//    std::cout << "Tex: " << *vt << std::endl;
+//    std::cout << "Norm: " << *vn << std::endl;
 }
 
 void Model::loadMTL(const char* Filename){
