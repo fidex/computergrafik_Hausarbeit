@@ -25,7 +25,23 @@ struct Vertex
     Vector Normal;
     float  TexcoordS;
     float  TexcoordT;
-    bool operator==(Vertex* const v);
+    bool hasNormal;
+    bool hasTexcoords;
+    bool operator==(const Vertex &v) const;
+};
+
+struct VertexHasher
+{
+  std::size_t operator()(const Vertex& v) const
+  {
+    using std::size_t;
+    using std::hash;
+    
+
+    return ((hash<float>()(v.Position.X))
+             ^ (hash<float>()(v.Position.Y))
+             ^ (hash<float>()(v.Position.Z)));
+  }
 };
 
 class BoundingBox
@@ -52,8 +68,8 @@ protected:
     void loadMTL(const char* filename);
     std::vector<Material> m_pMaterials;
     unsigned int m_MaterialCount;
-    std::vector<Vertex> m_pVertices;
-    std::vector<Vertex> m_pIndices;
+    Vertex* m_pVertices;
+    std::vector<GLuint> m_pIndices;
     unsigned int m_VertexCount;
     unsigned int m_IndexCount;
     GLuint vertexbuffer = 0;

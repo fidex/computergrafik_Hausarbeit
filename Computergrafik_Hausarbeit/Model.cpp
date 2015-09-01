@@ -9,9 +9,9 @@
 #include <GL/glut.h>
 
 #include "Model.h"
-#include <algorithm>
+#include <time.h>
 #include <vector>
-#include <unordered_set>
+#include <unordered_map>
 #include <fstream>
 #include <assert.h>
 #include <math.h>
@@ -37,11 +37,11 @@ Vertex::Vertex( const Vector& p, const Vector& n, float TexS, float TexT)
     TexcoordT = TexT;
 }
 
-bool Vertex::operator==(Vertex* const v) {
-    if(this->Normal == v->Normal)
-    if(this->Position == v->Position)
-    if(this->TexcoordS == v->TexcoordS)
-    if(this->TexcoordT == v->TexcoordT)
+bool Vertex::operator==(const Vertex &v) const{
+    if(this->Normal == v.Normal)
+    if(this->Position == v.Position)
+    if(this->TexcoordS == v.TexcoordS)
+    if(this->TexcoordT == v.TexcoordT)
         return true;
     
     return false;
@@ -61,10 +61,14 @@ Model::Model() : m_MaterialCount(0), m_VertexCount(0)
 }
 
 Model::~Model()
-{}
+{
+    if( m_pVertices)
+        delete [] m_pVertices;
+}
 
 bool Model::loadOBJ( const char* Filename, bool FitSize)
 {
+    time_t t = time(0);
     std::ifstream file(Filename);
     std::string line;
     
@@ -86,10 +90,16 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     
     
     char type[7] = "aa";
+    int hits = 0;
+    
+    int linecounter = 1;
+    
     while(std::getline(file,line)){  //read line 
-        
-        sscanf(line.c_str(), "%6s ", type);
+        std::cout << "line: " << linecounter << std::endl;
+        linecounter++;
+        hits = sscanf(line.c_str(), "%6s ", type);
         //std::cout << type << std::endl;
+        if(hits == 1){
         if(!strcmp(type, "v")){
             //std::cout << "Vertex!" << std::endl;
             float x;
@@ -115,7 +125,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             float x;
             float y;
             float z;
-            
+
             sscanf(line.c_str(), "%*s %f %f %f",&x,&y,&z);
             Vector v(x, y, z);
             normals.push_back(v);
@@ -133,7 +143,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
         }
         else if(!strcmp(type, "f")){
             //std::cout << "Face!" << std::endl;
-            
+
             //f 1/2/1 2//5 3
             std::stringstream ssline(line);
             std::vector<std::string> values;
@@ -144,7 +154,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
                 values.push_back( substr );
             }
             //{1/2/1 2//5 3}
-            
+
 
             for(int i=1; i<(values.size()-1); i++){     //Convert xs to Triangles
                 Face f;
@@ -156,39 +166,67 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             }
 
         }
-        
+        }
     } //File processed
     
-    //Testkram für indexing
-    std::vector<Vertex> out_vertices;
-    std::vector<GLuint> out_indices;
+    //Indexing
+    std::unordered_map<Vertex, int, VertexHasher> vertex_map;
+    
+    int vindex;
+    int nindex;
+    int uvindex;
+    
+    int index;
+    int vertexcounter = 0;
+    
     for(int i=0; i<faces.size(); i++){
         
         for(int j=0; j < 3;j++){
             Vertex v;
-            int index;
             
-            v.Position = vertices[faces[i].vindex[j]-1];
-            v.Normal = normals[faces[i].nindex[j]-1];               //Segfault
-            v.TexcoordS = uvs[faces[i].uvindex[j]-1].s;
-            v.TexcoordT = uvs[faces[i].uvindex[j]-1].t;
+            vindex = faces[i].vindex[j]-1;
+            nindex = faces[i].nindex[j]-1;
+            uvindex = faces[i].uvindex[j]-1;
             
-            index = std::find(out_vertices.begin(), out_vertices.end(), &v) - out_vertices.begin();
-            if(index == out_vertices.size()-1){
-                std::cout << "Vertex not found, creating at index " << index << std::endl;
-                out_vertices.push_back(v);
+            //Vertex parsen
+            v.Position = vertices[vindex];
+            if(!nindex < 0){
+                v.Normal = normals[nindex];
+                v.hasNormal = true;
             }else{
-                std::cout << "Vertex found at index " << index << std::endl;
+                v.hasNormal = false;
             }
-            out_indices.push_back(index);
-            std::cout << "" << std::endl;
+            if(!uvindex < 0){
+                v.TexcoordS = uvs[uvindex].s;
+                v.TexcoordT = uvs[uvindex].t;
+                v.hasTexcoords = true;
+            }else{
+                v.hasTexcoords = false;
+            }
+            
+            std::pair<Vertex, int> data(v, vertexcounter);
+            std::pair<std::unordered_map<Vertex, int, VertexHasher>::iterator, bool> indexData = vertex_map.insert(std::make_pair(v,vertexcounter));
+            if(indexData.second){
+                std::cout << "New Vertex inserted at " << vertexcounter << std::endl;
+                index = vertexcounter;
+                vertexcounter++;
+            }else{
+                index = indexData.first->second;
+                std::cout << "Vertex found at " << index << std::endl;
+            }
+            m_pIndices.push_back(index);
         }
         
     }
     
-    
-    //createCube();
-    //return true;
+//    m_pVertices.resize(vertex_map.size());
+    m_pVertices = new Vertex[vertex_map.size()];
+    for(auto itr:vertex_map){
+        m_pVertices[itr.second] = itr.first;
+    }
+
+    std::cout << "Took " << time(0)-t << "ms to load " << Filename << std::endl;
+    return true;
 }
 
 void Model::parseFaceVertex(std::string &values, GLuint *v, GLuint *vt, GLuint *vn){  

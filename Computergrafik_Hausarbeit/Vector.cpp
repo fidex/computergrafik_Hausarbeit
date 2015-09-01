@@ -43,7 +43,7 @@ float Vector::lengthSquared() const{
     return pow(this->X,2)+pow(this->Y,2)+pow(this->Z,2);
 }
 
-bool Vector::operator==(const Vector& v) {
+bool Vector::operator==(const Vector& v) const{
     if(this->X == v.X)
     if(this->Y == v.Y)
     if(this->Z == v.Z)
