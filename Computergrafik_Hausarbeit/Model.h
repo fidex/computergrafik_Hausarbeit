@@ -60,6 +60,8 @@ public:
     ~Model();
     const BoundingBox& boundingBox() const;
     bool loadOBJ( const char* Filename, bool FitSize=true);
+    void draw() const;
+    void buffer();
     void drawLines() const;
     void drawTriangles() const;
 protected:
@@ -72,8 +74,8 @@ protected:
     std::vector<GLuint> m_pIndices;
     unsigned int m_VertexCount;
     unsigned int m_IndexCount;
-    GLuint vertexbuffer = 0;
-    GLuint indexbuffer = 0;
+    GLuint m_vertexBufferID = 0;
+    GLuint m_indexBufferID = 0;
     BoundingBox m_Box;
 };
 

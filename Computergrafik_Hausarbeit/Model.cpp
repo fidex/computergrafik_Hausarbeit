@@ -5,8 +5,7 @@
 //  Created by Philipp Lensing on 23.10.14.
 //  Copyright (c) 2014 Philipp Lensing. All rights reserved.
 //
-#include <GL/gl.h>
-#include <GL/glut.h>
+#include <GL/glew.h>
 
 #include "Model.h"
 #include <time.h>
@@ -22,6 +21,7 @@
 #include <sstream>
 
 #define toDigit(c) (c-'0')
+#define BUFFER_OFFSET(i) ((void*)(i))
 
 
 Vertex::Vertex()
@@ -68,7 +68,8 @@ Model::~Model()
 
 bool Model::loadOBJ( const char* Filename, bool FitSize)
 {
-    time_t t = time(0);
+    clock_t t = clock();
+    
     std::ifstream file(Filename);
     std::string line;
     
@@ -95,7 +96,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     int linecounter = 1;
     
     while(std::getline(file,line)){  //read line 
-        std::cout << "line: " << linecounter << std::endl;
+//        std::cout << "line: " << linecounter << std::endl;
         linecounter++;
         hits = sscanf(line.c_str(), "%6s ", type);
         //std::cout << type << std::endl;
@@ -139,7 +140,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             char matname[255];
             sscanf(line.c_str(), "%*s %s", matname);
             currentMat = matname;
-            std::cout << "Using mat: " << currentMat << std::endl;
+//            std::cout << "Using mat: " << currentMat << std::endl;
         }
         else if(!strcmp(type, "f")){
             //std::cout << "Face!" << std::endl;
@@ -207,12 +208,12 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             std::pair<Vertex, int> data(v, vertexcounter);
             std::pair<std::unordered_map<Vertex, int, VertexHasher>::iterator, bool> indexData = vertex_map.insert(std::make_pair(v,vertexcounter));
             if(indexData.second){
-                std::cout << "New Vertex inserted at " << vertexcounter << std::endl;
+ //               std::cout << "New Vertex inserted at " << vertexcounter << std::endl;
                 index = vertexcounter;
                 vertexcounter++;
             }else{
                 index = indexData.first->second;
-                std::cout << "Vertex found at " << index << std::endl;
+//                std::cout << "Vertex found at " << index << std::endl;
             }
             m_pIndices.push_back(index);
         }
@@ -220,12 +221,13 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     }
     
 //    m_pVertices.resize(vertex_map.size());
+    m_VertexCount = vertex_map.size();
     m_pVertices = new Vertex[vertex_map.size()];
     for(auto itr:vertex_map){
         m_pVertices[itr.second] = itr.first;
     }
 
-    std::cout << "Took " << time(0)-t << "ms to load " << Filename << std::endl;
+    std::cout << "Took " << (double) (clock()-t)/CLOCKS_PER_SEC << "s to load " << Filename << std::endl;
     return true;
 }
 
@@ -295,6 +297,35 @@ void Model::loadMTL(const char* Filename){
         }
     }
 }
+
+void Model::buffer(){
+    glGenBuffers(1, &m_vertexBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
+    glBufferData(GL_ARRAY_BUFFER, m_VertexCount*sizeof(Vertex), m_pVertices, GL_STATIC_DRAW);       //static draw evtl. aendern
+
+    glGenBuffers(1, &m_indexBufferID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_pIndices.size()*sizeof(GLuint), &m_pIndices[0], GL_STATIC_DRAW);
+}
+
+void Model::draw() const {
+    glPushMatrix();
+    
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
+    
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(12));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+    
+    glDrawElements(GL_TRIANGLES, m_pIndices.size(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    glPopMatrix();
+}
+
 
 //void Model::createCube()
 //{
