@@ -294,6 +294,14 @@ void Model::loadMTL(const char* Filename){
             float exp;
             sscanf(line.c_str(), "%*s %f", &exp);
             m_pMaterials[m_MaterialCount-1].setSpecularExponent(exp);   
+        }else if(!strcmp(type, "map_Kd")){
+            char* filename;
+            sscanf(line.c_str(), "%*s %s", &filename);
+            m_pMaterials[m_MaterialCount-1].setDiffuseTexture(filename);
+        }else if(!strcmp(type, "map_Ks")){
+            char* filename;
+            sscanf(line.c_str(), "%*s %s", &filename);
+            m_pMaterials[m_MaterialCount-1].setSpecularTexture(filename);
         }
     }
 }
@@ -306,9 +314,18 @@ void Model::buffer(){
     glGenBuffers(1, &m_indexBufferID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_pIndices.size()*sizeof(GLuint), &m_pIndices[0], GL_STATIC_DRAW);
+    
+    //Unbind buffers
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    isBuffered = true;
 }
 
-void Model::draw() const {
+void Model::draw(){
+    if(!isBuffered){
+        buffer();
+    }
     glPushMatrix();
     
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
@@ -323,6 +340,11 @@ void Model::draw() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
     
     glDrawElements(GL_TRIANGLES, m_pIndices.size(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    
+    //Unbind buffers
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
     glPopMatrix();
 }
 

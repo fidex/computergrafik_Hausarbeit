@@ -42,6 +42,15 @@ float Material::getSpecularExponent() const
     return m_SpecularExp;
 }
 
+const Texture& Material::getDiffuseTexture() const {
+    return m_DiffuseTexture;
+}
+
+const Texture& Material::getSpecularTexture() const {
+    return m_SpecularTexture;
+}
+
+
 const std::string& Material::getName() const
 {
     return m_Name;
@@ -77,5 +86,8 @@ void Material::setDiffuseTexture( const char* Filename)
     m_DiffuseTexture.LoadFromBMP(Filename);
 }
 
+void Material::setSpecularTexture(const char* Filename) {
+    m_SpecularTexture.LoadFromBMP(Filename);
+}
 
 

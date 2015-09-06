@@ -60,7 +60,7 @@ public:
     ~Model();
     const BoundingBox& boundingBox() const;
     bool loadOBJ( const char* Filename, bool FitSize=true);
-    void draw() const;
+    void draw();
     void buffer();
     void drawLines() const;
     void drawTriangles() const;
@@ -77,6 +77,7 @@ protected:
     GLuint m_vertexBufferID = 0;
     GLuint m_indexBufferID = 0;
     BoundingBox m_Box;
+    bool isBuffered=false;
 };
 
 #endif /* defined(__RealtimeRending__Model__) */

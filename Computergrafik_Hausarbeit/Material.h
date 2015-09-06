@@ -24,6 +24,8 @@ public:
     const Color& getSpecularColor() const;
     const Color& getAmbientColor() const;
     float getSpecularExponent() const;
+    const Texture& getDiffuseTexture() const;
+    const Texture& getSpecularTexture() const;
     const std::string& getName() const;
     
     void setDiffuseColor( const Color& color);
@@ -32,12 +34,14 @@ public:
     void setSpecularExponent( const float exp);
     void setName( const std::string& name);
     void setDiffuseTexture( const char* Filename);
+    void setSpecularTexture( const char* Filename);
 
 protected:
     Color m_DiffuseColor;
     Color m_SpecularColor;
     Color m_AmbientColor;
     Texture m_DiffuseTexture;
+    Texture m_SpecularTexture;
     float m_SpecularExp;
     std::string m_Name;
     
