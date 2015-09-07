@@ -5,12 +5,10 @@
 //  Created by Philipp Lensing on 23.10.14.
 //  Copyright (c) 2014 Philipp Lensing. All rights reserved.
 //
-#include <GL/glew.h>
 
 #include "Model.h"
 #include <time.h>
 #include <vector>
-#include <unordered_map>
 #include <fstream>
 #include <assert.h>
 #include <math.h>
@@ -21,7 +19,7 @@
 #include <sstream>
 
 #define toDigit(c) (c-'0')
-#define BUFFER_OFFSET(i) ((void*)(i))
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 
 Vertex::Vertex()
@@ -134,7 +132,15 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
         else if(!strcmp(type, "mtllib")){
             char filename[255];
             sscanf(line.c_str(), "%*s %s", filename);
-            loadMTL(filename);
+            std::string objFilename = std::string(Filename);
+            size_t path_end = objFilename.find_last_of("/\\");
+            if(path_end != objFilename.npos){
+                std::string path = objFilename.substr(0, path_end);
+                std::cout << filename << std::endl;
+                loadMTL((path+"/"+filename).c_str());
+            }else{
+                loadMTL(filename);
+            }
         }
         else if(!strcmp(type, "usemtl")){
             char matname[255];
@@ -180,7 +186,20 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     int index;
     int vertexcounter = 0;
     
+    MaterialGroup tmp_mat;
+    tmp_mat.name = faces[0].matname;
+    tmp_mat.offset = 0;
+    
     for(int i=0; i<faces.size(); i++){
+        if(tmp_mat.name.compare(faces[i].matname) != 0){        //Neue Materialgruppe
+            //Anzahl Elemente der alten Gruppe setzen und speichern
+            tmp_mat.count = m_pIndices.size();
+            m_pMGroups.push_back(tmp_mat);
+            
+            //Name und Offset der neuen Gruppe setzen
+            tmp_mat.name = faces[i].matname;
+            tmp_mat.offset = m_pIndices.size();
+        }
         
         for(int j=0; j < 3;j++){
             Vertex v;
@@ -219,6 +238,9 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
         }
         
     }
+    //Anzahl der letzten Gruppe setzen und speichern
+    tmp_mat.count = m_pIndices.size();
+    m_pMGroups.push_back(tmp_mat);
     
 //    m_pVertices.resize(vertex_map.size());
     m_VertexCount = vertex_map.size();
@@ -268,43 +290,71 @@ void Model::loadMTL(const char* Filename){
     std::string line;
     
     char type[7] = "aa";
+    Material tmpMat;
+    
     while(std::getline(file,line)){  //read line 
         
         sscanf(line.c_str(), "%6s ", type);
-        
+        //std::cout << line << std::endl;
         if(!strcmp(type, "newmtl")){
             m_MaterialCount++;
+            if(m_MaterialCount > 1){    //Erstes Material wurde komplett ausgelesen
+                std::pair<std::string, Material> data(tmpMat.getName(), tmpMat);
+                m_pMaterials.insert(data);
+            }
             char name[255];
             sscanf(line.c_str(), "%*s %s", name);
-            m_pMaterials.push_back(Material());
-            m_pMaterials[m_MaterialCount-1].setName(name);
+            tmpMat.setName(name);
         }else if(!strcmp(type, "Kd")){
             float r, g, b;
             sscanf(line.c_str(), "%*s %f %f %f", &r, &g, &b);
-            m_pMaterials[m_MaterialCount-1].setDiffuseColor(Color(r,g,b));   
+            tmpMat.setDiffuseColor(Color(r,g,b));   
         }else if(!strcmp(type, "Ka")){
             float r, g, b;
             sscanf(line.c_str(), "%*s %f %f %f", &r, &g, &b);
-            m_pMaterials[m_MaterialCount-1].setAmbientColor(Color(r,g,b));   
+            tmpMat.setAmbientColor(Color(r,g,b));   
         }else if(!strcmp(type, "Ks")){
             float r, g, b;
             sscanf(line.c_str(), "%*s %f %f %f", &r, &g, &b);
-            m_pMaterials[m_MaterialCount-1].setSpecularColor(Color(r,g,b));   
+            tmpMat.setSpecularColor(Color(r,g,b));   
         }else if(!strcmp(type, "Ns")){
             float exp;
             sscanf(line.c_str(), "%*s %f", &exp);
-            m_pMaterials[m_MaterialCount-1].setSpecularExponent(exp);   
+            tmpMat.setSpecularExponent(exp);   
         }else if(!strcmp(type, "map_Kd")){
-            char* filename;
-            sscanf(line.c_str(), "%*s %s", &filename);
-            m_pMaterials[m_MaterialCount-1].setDiffuseTexture(filename);
-        }else if(!strcmp(type, "map_Ks")){
-            char* filename;
-            sscanf(line.c_str(), "%*s %s", &filename);
-            m_pMaterials[m_MaterialCount-1].setSpecularTexture(filename);
+            char filename[255];
+            sscanf(line.c_str(), "%*s %s", filename);
+            std::cout << "Loading Texture " << filename << std::endl;
+            tmpMat.setDiffuseTexture(filename);
         }
+//        }else if(!strcmp(type, "map_Ks")){
+//            char* filename;
+//            sscanf(line.c_str(), "%*s %s", filename);
+//            tmpMat.setSpecularTexture(filename);
+//        }
     }
+    
+    //Letztes Material einfuegen
+    std::pair<std::string, Material> data(tmpMat.getName(), tmpMat);
+    m_pMaterials.insert(data);
+    
 }
+
+bool Model::loadShaders(const char* VertexShader, const char* FragmentShader) {
+    shaderLoaded = m_shader.load(VertexShader, FragmentShader);
+    return shaderLoaded;
+}
+
+//bool Model::loadVertexShader(const char* VertexShader) {
+//    shaderLoaded = m_shader.loadVertexShader(VertexShader);
+//    return shaderLoaded;
+//}
+//
+//bool Model::loadFragmentShader(const char* FragmentShader) {
+//    shaderLoaded = m_shader.loadFragmentShader(FragmentShader);
+//    return shaderLoaded;
+//}
+
 
 void Model::buffer(){
     glGenBuffers(1, &m_vertexBufferID);
@@ -338,16 +388,42 @@ void Model::draw(){
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+    if(shaderLoaded)
+        m_shader.activate();
+    for(MaterialGroup mg:m_pMGroups){
+        //std::cout << "Texturing with " << mg.name << std::endl;
+        setMaterial(mg.name);
+        glDrawElements(GL_TRIANGLES, mg.count, GL_UNSIGNED_INT, BUFFER_OFFSET(mg.offset));
+    }
+    if(shaderLoaded)
+        m_shader.deactivate();
     
-    glDrawElements(GL_TRIANGLES, m_pIndices.size(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-    
-    //Unbind buffers
+
+    //Cleanup
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
     
     glPopMatrix();
 }
 
+bool Model::setMaterial(std::string matName) {
+    Material mat;
+    
+    try{
+        mat = m_pMaterials.at(matName);
+    }catch(const std::out_of_range& oor){
+        std::cout << "Material " << matName << "not found" << std::endl;
+        return false;
+    }
+
+
+    m_shader.setMaterial(mat);
+    return true;
+}
 
 //void Model::createCube()
 //{

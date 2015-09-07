@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include <stdint.h>
 #include <fstream>
+#include <GL/glew.h>
 
 #define DWORD uint32_t
 #define WORD __uint16_t
@@ -61,7 +62,7 @@ bool Texture::LoadFromBMP( const char* Filename )
     if(data==NULL)
         return false;
     
-    
+//    std::cout << "Bitmap with " << width << "x" << height << std::endl;
     glGenTextures(1, &m_TextureID);
     
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
@@ -73,18 +74,22 @@ bool Texture::LoadFromBMP( const char* Filename )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     glBindTexture(GL_TEXTURE_2D, 0);
-   
+
     return true;
 }
 
-void Texture::apply() const
+void Texture::apply(GLint shaderProgram) const
 {
     if(m_TextureID==0)
         return;
     
+//    glActiveTexture(GL_TEXTURE0);
+//    glClientActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
-    
+    GLint loc = glGetUniformLocation(shaderProgram, "DiffuseTexture");
+    glUniform1i(loc, 0);
+
 }
 
 unsigned char* Texture::LoadBMP(const char* Filename, unsigned int& width, unsigned int& height)

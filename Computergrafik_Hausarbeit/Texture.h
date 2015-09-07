@@ -9,9 +9,9 @@
 #ifndef __RealtimeRending__Texture__
 #define __RealtimeRending__Texture__
 
+#include <GL/glew.h>
 #include <iostream>
-#include <GL/gl.h>
-#include <GL/glut.h>
+
 
 class Texture
 {
@@ -19,7 +19,7 @@ public:
     Texture();
     ~Texture();
     bool LoadFromBMP( const char* Filename );
-    void apply() const;
+    void apply(GLint shaderProgram) const;
     bool isValid() const;
 protected:
     unsigned char* LoadBMP( const char* Filename, unsigned int& width, unsigned int& height );

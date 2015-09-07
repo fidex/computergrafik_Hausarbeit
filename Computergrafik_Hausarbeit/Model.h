@@ -9,13 +9,15 @@
 #ifndef __RealtimeRending__Model__
 #define __RealtimeRending__Model__
 
+#include <GL/glew.h>
 #include <iostream>
 #include "Vector.h"
 #include "Color.h"
 #include <string>
-#include <map>
 #include <vector>
+#include <unordered_map>
 #include "Material.h"
+#include "ShaderProgram.h"
 
 struct Vertex
 {
@@ -28,6 +30,11 @@ struct Vertex
     bool hasNormal;
     bool hasTexcoords;
     bool operator==(const Vertex &v) const;
+};
+
+struct MaterialGroup{
+    GLuint offset, count;
+    std::string name;
 };
 
 struct VertexHasher
@@ -60,6 +67,9 @@ public:
     ~Model();
     const BoundingBox& boundingBox() const;
     bool loadOBJ( const char* Filename, bool FitSize=true);
+    bool loadShaders(const char* VertexShader, const char* FragmentShader);
+//    bool loadVertexShader(const char* VertexShader);
+//    bool loadFragmentShader(const char* FragmentShader);
     void draw();
     void buffer();
     void drawLines() const;
@@ -68,16 +78,20 @@ protected:
     void createCube();
     void parseFaceVertex(std::string &line, GLuint *v, GLuint *vt, GLuint *vn);
     void loadMTL(const char* filename);
-    std::vector<Material> m_pMaterials;
+    bool setMaterial(std::string matName);
+    std::unordered_map<std::string, Material> m_pMaterials;
     unsigned int m_MaterialCount;
     Vertex* m_pVertices;
     std::vector<GLuint> m_pIndices;
+    std::vector<MaterialGroup> m_pMGroups;
     unsigned int m_VertexCount;
     unsigned int m_IndexCount;
     GLuint m_vertexBufferID = 0;
     GLuint m_indexBufferID = 0;
+    ShaderProgram m_shader;
     BoundingBox m_Box;
     bool isBuffered=false;
+    bool shaderLoaded=false;
 };
 
 #endif /* defined(__RealtimeRending__Model__) */

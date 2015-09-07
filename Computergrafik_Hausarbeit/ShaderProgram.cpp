@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include "ShaderProgram.h"
 
-
+const Vector g_LightPos = Vector( 0,4,0);
 
 
 ShaderProgram::ShaderProgram(){
@@ -21,23 +21,27 @@ ShaderProgram::~ShaderProgram(){
 
 bool ShaderProgram::load(const char *VertexShader, const char *FragmentShader){
     
-        
+//    std::cout << "shaderVersion: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     this->m_VertexShader   = glCreateShader(GL_VERTEX_SHADER);    
     this->m_FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
    
     
     std::cout << "loading shaders" << std::endl;
-    loadVertexShader(VertexShader);
-    loadFragmentShader(FragmentShader);
+    //if(VertexShader != NULL){
+        loadVertexShader(VertexShader);
+    //}
+    //if(FragmentShader != NULL){
+        loadFragmentShader(FragmentShader);
+    //}
     std::cout << "compiling shaders" << std::endl;
     compile();
     
-    glUseProgram(m_ShaderProgram);
+//    glUseProgram(m_ShaderProgram);
     
     printProgramInfoLog(m_ShaderProgram);
     printShaderInfoLog(m_VertexShader);
     printShaderInfoLog(m_FragmentShader);
-    
+            
     return true;
 }
 
@@ -46,7 +50,7 @@ bool ShaderProgram::loadVertexShader(const char *VertexShader){
     std::string str((std::istreambuf_iterator<char>(t)),
                     std::istreambuf_iterator<char>());
     const char * vv = str.c_str();
-    std::cout << "Loading Vertex Shader : "<< str.c_str() << std::endl;
+//    std::cout << "Loading Vertex Shader : "<< str.c_str() << std::endl;
     GLint length = str.length();
     glShaderSource(m_VertexShader, 1, &vv, &length);
     return true;
@@ -129,6 +133,31 @@ GLint ShaderProgram::getParameterID(const char *ParameterName) const{
 void ShaderProgram::setParameter(GLint ID, int Param){
     glUniform1i(ID, Param);
 }
+
+void ShaderProgram::setMaterial(const Material& mat) {
+
+    GLint diffCLoc = glGetUniformLocation(m_ShaderProgram, "DiffColor");
+    GLint specCLoc = glGetUniformLocation(m_ShaderProgram, "SpecColor");
+    GLint ambCLoc = glGetUniformLocation(m_ShaderProgram, "AmbientColor");
+    GLint specELoc = glGetUniformLocation(m_ShaderProgram, "SpecExp");
+    GLint lightPosLoc = glGetUniformLocation(m_ShaderProgram, "LightPos");
+    
+
+    Color diff = mat.getDiffuseColor();
+    Color amb = mat.getAmbientColor();
+    Color spec = mat.getSpecularColor();
+    GLfloat shine = mat.getSpecularExponent();
+
+    
+    glUniform3f(diffCLoc, diff.R, diff.G, diff.B);
+    glUniform3f(specCLoc, spec.R, spec.G, spec.B);
+    glUniform3f(ambCLoc, amb.R, amb.G, amb.B);
+    glUniform1f(specELoc, shine);
+    glUniform3f(lightPosLoc, g_LightPos.X, g_LightPos.Y, g_LightPos.Z);
+    mat.getDiffuseTexture().apply(m_ShaderProgram);
+    
+}
+
 
 //void ShaderProgram::setParameter(GLint ID, const Matrix &Param){
 //    //glUniformMatrix4fv(ID, 1, GL_FALSE, Param);

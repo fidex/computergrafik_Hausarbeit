@@ -16,6 +16,7 @@
 #include "Vector.h"
 #include "Color.h"
 #include "Matrix.h" 
+#include "Material.h"
 #include <fstream>
 
 class ShaderProgram{
@@ -34,6 +35,7 @@ public:
     void setParameter(GLint ID, const Vector& Param);
     void setParameter(GLint ID, const Color& Param);
     void setParameter(GLint ID, const Matrix& Param);
+    void setMaterial(Material const &mat);
     
     void activate() const;
     void deactivate() const;
