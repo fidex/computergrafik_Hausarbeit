@@ -17,7 +17,7 @@
 #include "ShaderProgram.h"
 
 // Model that should be loaded
-const char* g_ModelToLoad = "figure.obj";
+const char* g_ModelToLoad = "testkiste2.obj";
 
 // window x and y size
 const unsigned int g_WindowWidth=640;
@@ -26,7 +26,7 @@ const unsigned int g_WindowHeight=480;
 // light position (point light)
 const Vector g_LightPos = Vector( 0,4,0);
 
-std::string g_path("/home/fide/NetBeansProjects/Computergrafik/computergrafik_Hausarbeit/Computergrafik_Hausarbeit/texture/");
+std::string g_path("./shader/");
 ShaderProgram g_Shader;
 
 
@@ -52,7 +52,7 @@ enum RenderMode
     LAST_RENDERMODE
 };
 
-RenderMode g_RenderMode = RENDERMODE_LINES;
+RenderMode g_RenderMode = RENDERMODE_TRIANGLES;
 
 int main(int argc, char * argv[])
 {
@@ -76,11 +76,12 @@ int main(int argc, char * argv[])
     glutKeyboardFunc(KeyboardCallback);
     glutMotionFunc(MouseMoveCallback);
     
-    ShaderProgram g_Shader;
-    g_Shader.load((g_path+"toon.vert").c_str(), (g_path+"toon.frag").c_str());
-    g_Shader.activate();
+//    ShaderProgram g_Shader;
+//    g_Shader.load((g_path+"toon.vert").c_str(), (g_path+"toon.frag").c_str());
+//    g_Shader.activate();
 
     g_Model.loadOBJ(g_ModelToLoad);
+    g_Model.loadShaders((g_path+"test.vert").c_str(), (g_path+"test.frag").c_str());
     
     glutMainLoop();
     
@@ -181,29 +182,32 @@ void DrawScene()
     DrawGroundGrid();
     
     /* tests*/
-    Vector v = Vector(1.0f,1.0f,1.0f);
-    Vector v2 = Vector(2.0f,2.0f,3.0f);
-    drawLineTest(v,v2);
-    
-    drawTriangleTest(Vector(1.0f,1.0f,1.0f),Vector(2.0f,2.0f,2.0f), Vector(3.0f,2.0f,3.0f));
-    
+//    Vector v = Vector(1.0f,1.0f,1.0f);
+//    Vector v2 = Vector(2.0f,2.0f,3.0f);
+//    drawLineTest(v,v2);
+//    
+//    drawTriangleTest(Vector(1.0f,1.0f,1.0f),Vector(2.0f,2.0f,2.0f), Vector(3.0f,2.0f,3.0f));
+//    
     GLfloat lpos[4];
     lpos[0]=g_LightPos.X; lpos[1]=g_LightPos.Y; lpos[2]=g_LightPos.Z; lpos[3]=1;
-    glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-
-    if(g_RenderMode == RENDERMODE_LINES)
-    {
-        glDisable(GL_LIGHTING);
-        g_Model.drawLines();
-        glEnable(GL_LIGHTING);
-    }
-    else if(g_RenderMode== RENDERMODE_TRIANGLES)
-        g_Model.drawTriangles();
+//    glLightfv(GL_LIGHT0, GL_POSITION, lpos);
+    glLightModelfv( GL_LIGHT_MODEL_AMBIENT, lpos );
+//    if(g_RenderMode == RENDERMODE_LINES)
+//    {
+//        glDisable(GL_LIGHTING);
+//        g_Model.draw();
+//        glEnable(GL_LIGHTING);
+//    }
+//    else if(g_RenderMode== RENDERMODE_TRIANGLES){
+            
+//    }
+    g_Model.draw(); 
     
     glutSwapBuffers();
     glutPostRedisplay();
     
 }
+
 void drawLineTest(Vector v1,Vector v2){
     glDisable( GL_LIGHTING);
     glBegin(GL_LINES);
