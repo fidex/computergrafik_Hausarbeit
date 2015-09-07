@@ -31,11 +31,12 @@ void main()
 	vec3 DiffuseComponent = DiffColor * sat(dot(N,L));
 	vec3 SpecularComponent = SpecColor * pow(sat(dot(E,R)), SpecExp);
 
-	vec3 DiffuseTexColor = texture2D(DiffuseTexture, Texcoord).rgb;
+	vec3 DiffuseTexColor = texture2D(DiffuseTexture, Texcoord.xy).rgb;
 	DiffuseComponent *= DiffuseTexColor;
 
 	vec3 AmbientComponent = AmbientColor*DiffuseTexColor;
 	
-	fragColor = vec4(DiffuseTexColor + SpecularComponent + AmbientComponent, 0.0);
+	fragColor = vec4(DiffuseComponent + SpecularComponent + AmbientComponent, 0.0);
+//	fragColor = vec4(DiffuseComponent, 0.0);
 }
 

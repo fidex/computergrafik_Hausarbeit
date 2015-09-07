@@ -1,0 +1,13 @@
+# Blender MTL File: 'testkiste.blend'
+# Material Count: 1
+
+newmtl Grundfarbe
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.030052 0.019113
+Ks 0.825000 0.631963 0.036158
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd wood.bmp
+map_Ks wood.bmp
