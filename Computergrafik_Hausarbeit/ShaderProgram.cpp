@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include "ShaderProgram.h"
 
-const Vector g_LightPos = Vector( 0,4,0);
+const Vector g_LightPos = Vector( 4,4,4);
 
 
 ShaderProgram::ShaderProgram(){
@@ -135,7 +135,7 @@ void ShaderProgram::setParameter(GLint ID, int Param){
 }
 
 void ShaderProgram::setMaterial(const Material& mat) {
-
+ 
     GLint diffCLoc = glGetUniformLocation(m_ShaderProgram, "DiffColor");
     GLint specCLoc = glGetUniformLocation(m_ShaderProgram, "SpecColor");
     GLint ambCLoc = glGetUniformLocation(m_ShaderProgram, "AmbientColor");
@@ -148,13 +148,18 @@ void ShaderProgram::setMaterial(const Material& mat) {
     Color spec = mat.getSpecularColor();
     GLfloat shine = mat.getSpecularExponent();
 
-    
+//    std::cout << "DiffColor: " << diff.R << " " << diff.G << " " << diff.B << std::endl;
+//    std::cout << "AmbientColor: " << amb.R << " " << amb.G << " " << amb.B << std::endl;
+//    std::cout << "SpecularColor: " << spec.R << " " << spec.G << " " << spec.B << std::endl;
+//    std::cout << "Shine " << shine << std::endl;
+
     glUniform3f(diffCLoc, diff.R, diff.G, diff.B);
     glUniform3f(specCLoc, spec.R, spec.G, spec.B);
     glUniform3f(ambCLoc, amb.R, amb.G, amb.B);
     glUniform1f(specELoc, shine);
     glUniform3f(lightPosLoc, g_LightPos.X, g_LightPos.Y, g_LightPos.Z);
-    mat.getDiffuseTexture().apply(m_ShaderProgram);
+    mat.getDiffuseTexture().apply();
+
     
 }
 

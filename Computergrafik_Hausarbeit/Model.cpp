@@ -186,6 +186,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     int index;
     int vertexcounter = 0;
     
+    if(faces.size() > 0){
     MaterialGroup tmp_mat;
     tmp_mat.name = faces[0].matname;
     tmp_mat.offset = 0;
@@ -248,7 +249,7 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
     for(auto itr:vertex_map){
         m_pVertices[itr.second] = itr.first;
     }
-
+    }
     std::cout << "Took " << (double) (clock()-t)/CLOCKS_PER_SEC << "s to load " << Filename << std::endl;
     return true;
 }
@@ -357,28 +358,34 @@ bool Model::loadShaders(const char* VertexShader, const char* FragmentShader) {
 
 
 void Model::buffer(){
-    glGenBuffers(1, &m_vertexBufferID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
-    glBufferData(GL_ARRAY_BUFFER, m_VertexCount*sizeof(Vertex), m_pVertices, GL_STATIC_DRAW);       //static draw evtl. aendern
+    if(!isBuffered){
+        glGenBuffers(1, &m_vertexBufferID);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
+        glBufferData(GL_ARRAY_BUFFER, m_VertexCount*sizeof(Vertex), m_pVertices, GL_STATIC_DRAW);       //static draw evtl. aendern
 
-    glGenBuffers(1, &m_indexBufferID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_pIndices.size()*sizeof(GLuint), &m_pIndices[0], GL_STATIC_DRAW);
-    
-    //Unbind buffers
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    isBuffered = true;
+        glGenBuffers(1, &m_indexBufferID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_pIndices.size()*sizeof(GLuint), &m_pIndices[0], GL_STATIC_DRAW);
+
+        //Unbind buffers
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        isBuffered = true;
+    }
 }
 
 void Model::draw(){
     if(!isBuffered){
         buffer();
     }
-    glPushMatrix();
     
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+    
+    glPushMatrix();
+    
+    
     
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(0));
@@ -387,7 +394,8 @@ void Model::draw(){
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+
+    
     if(shaderLoaded)
         m_shader.activate();
     for(MaterialGroup mg:m_pMGroups){
@@ -398,16 +406,18 @@ void Model::draw(){
     if(shaderLoaded)
         m_shader.deactivate();
     
-
-    //Cleanup
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
+    
+    glPopMatrix();
+    
+    //Unbind buffers
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     
-    glPopMatrix();
+    
 }
 
 bool Model::setMaterial(std::string matName) {
@@ -419,10 +429,11 @@ bool Model::setMaterial(std::string matName) {
         std::cout << "Material " << matName << "not found" << std::endl;
         return false;
     }
-
-
-    m_shader.setMaterial(mat);
-    return true;
+    if(shaderLoaded){
+        m_shader.setMaterial(mat);
+        return true;
+    }else
+        return false;
 }
 
 //void Model::createCube()

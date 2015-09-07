@@ -19,7 +19,7 @@ public:
     Texture();
     ~Texture();
     bool LoadFromBMP( const char* Filename );
-    void apply(GLint shaderProgram) const;
+    void apply() const;
     bool isValid() const;
 protected:
     unsigned char* LoadBMP( const char* Filename, unsigned int& width, unsigned int& height );

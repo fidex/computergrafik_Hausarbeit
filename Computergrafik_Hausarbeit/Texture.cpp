@@ -78,18 +78,13 @@ bool Texture::LoadFromBMP( const char* Filename )
     return true;
 }
 
-void Texture::apply(GLint shaderProgram) const
+void Texture::apply() const
 {
     if(m_TextureID==0)
         return;
-    
-//    glActiveTexture(GL_TEXTURE0);
-//    glClientActiveTexture(GL_TEXTURE0);
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
-    GLint loc = glGetUniformLocation(shaderProgram, "DiffuseTexture");
-    glUniform1i(loc, 0);
-
 }
 
 unsigned char* Texture::LoadBMP(const char* Filename, unsigned int& width, unsigned int& height)
