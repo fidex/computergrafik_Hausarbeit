@@ -32,11 +32,13 @@ public:
     void SetScaling(Vector Scaling);
     
     void addChildObject(Object& Object);
-    Object* hasChild(std::string& name);
     bool adoption(std::string& parentName, Object& obj);
+    Object* findObject(std::string& parentName);
     void draw();
     
 protected:
+    
+    Object* hasChild(std::string& name);
     std::string m_Name;
     Model* m_Model = NULL;
     Vector m_Translation;
@@ -44,6 +46,7 @@ protected:
     Vector m_Scaling;
     GLfloat m_RotationAngle;
     std::map<std::string, Object> m_Children;
+    
 };
 
 #endif	/* OBJECT_H */

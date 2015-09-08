@@ -105,17 +105,26 @@ Object* Object::hasChild(std::string& name) {
 }
 
 bool Object::adoption(std::string& parentName, Object& obj) {
-    Object* parent = this->hasChild(parentName);
-    
+    Object* parent = findObject(parentName);
     if(parent != NULL){
         parent->addChildObject(obj);
         return true;
+    }
+    return false;
+}
+
+Object* Object::findObject(std::string& name) {
+    Object* result = this->hasChild(name);
+    
+    if(result != NULL){         //Object is child of current
+        return result;
     }else{
         for(auto itr:m_Children){
-            if(itr.second.adoption(parentName, obj)){   //Parent found somewhere
-                return true;
+            result = itr.second.findObject(name);
+            if(result != NULL){   //Object found somewhere, forward
+                return result;
             }
         }
-        return false;
+        return NULL;
     }
 }

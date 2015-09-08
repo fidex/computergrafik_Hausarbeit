@@ -21,12 +21,11 @@ void Scene::SetTerrain(Ground Terrain) {
 
 Object* Scene::GetObject(std::string name) {
     try{
-        return m_ObjRoot.hasChild(name);
+        return m_ObjRoot.findObject(name);
     }catch(std::out_of_range& oor){
         return NULL;
     }
 }
-
 
 void Scene::addModel(Model m) {
     m_Models.insert(std::make_pair(m.getName(), m));
