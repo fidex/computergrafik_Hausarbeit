@@ -1,0 +1,35 @@
+terrain{
+	size 100 5 100
+	heightmap sack_rgb.bmp
+	mixmap mixmap.bmp
+	detailmap1 dm 8 8
+	detailmap2 dm 8 8
+}
+
+model kiste{
+	file testkiste2.obj
+}
+
+model kiste2{
+	file testkiste2.obj
+}
+
+model unterkiste{
+	file testkiste2.obj
+}
+
+object kiste1{
+	translation -1.0 0 -1.0
+	rotation 0 1 0 0
+	scaling 1 1 1
+	model kiste
+	parent NULL
+}
+
+object unterkiste{
+	translation -4.0 0 -4.0
+	rotation 0 1 0 0
+	scaling 0.5 0.5 0.5
+	model unterkiste
+	parent kiste1
+}
