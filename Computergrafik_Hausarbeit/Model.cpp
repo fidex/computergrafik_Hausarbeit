@@ -21,31 +21,6 @@
 #define toDigit(c) (c-'0')
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-
-Vertex::Vertex()
-{
-    
-}
-
-Vertex::Vertex( const Vector& p, const Vector& n, float TexS, float TexT)
-{
-    Position = p;
-    Normal = n;
-    TexcoordS = TexS;
-    TexcoordT = TexT;
-}
-
-bool Vertex::operator==(const Vertex &v) const{
-    if(this->Normal == v.Normal)
-    if(this->Position == v.Position)
-    if(this->TexcoordS == v.TexcoordS)
-    if(this->TexcoordT == v.TexcoordT)
-        return true;
-    
-    return false;
-}
-
-
 BoundingBox::BoundingBox()
 {
 }
@@ -375,6 +350,51 @@ void Model::buffer(){
     }
 }
 
+void Model::draw(Vector translation, Vector scaling, Vector rotation, GLfloat angle) {
+    if(!isBuffered){
+        buffer();
+    }
+    
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferID);
+    
+    glPushMatrix();
+    
+    
+    
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(12));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
+    
+    glTranslatef(translation.X, translation.Y, translation.Z);
+    glRotatef(angle, rotation.X, rotation.Y, rotation.Z);
+    glScalef(scaling.X, scaling.Y, scaling.Z);
+    
+    if(shaderLoaded)
+        m_shader.activate();
+    for(MaterialGroup mg:m_pMGroups){
+        //std::cout << "Texturing with " << mg.name << std::endl;
+        setMaterial(mg.name);
+        glDrawElements(GL_TRIANGLES, mg.count, GL_UNSIGNED_INT, BUFFER_OFFSET(mg.offset));
+    }
+    if(shaderLoaded)
+        m_shader.deactivate();
+    
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    
+    glPopMatrix();
+    
+    //Unbind buffers
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+//Nur zum testen
 void Model::draw(){
     if(!isBuffered){
         buffer();

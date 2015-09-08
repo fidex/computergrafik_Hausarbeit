@@ -18,37 +18,12 @@
 #include <unordered_map>
 #include "Material.h"
 #include "ShaderProgram.h"
+#include "primitives/Vertex.h"
 
-struct Vertex
-{
-    Vertex();
-    Vertex( const Vector& p, const Vector& n, float TexS, float TexT);
-    Vector Position;
-    Vector Normal;
-    float  TexcoordS;
-    float  TexcoordT;
-    bool hasNormal;
-    bool hasTexcoords;
-    bool operator==(const Vertex &v) const;
-};
 
 struct MaterialGroup{
     GLuint offset, count;
     std::string name;
-};
-
-struct VertexHasher
-{
-  std::size_t operator()(const Vertex& v) const
-  {
-    using std::size_t;
-    using std::hash;
-    
-
-    return ((hash<float>()(v.Position.X))
-             ^ (hash<float>()(v.Position.Y))
-             ^ (hash<float>()(v.Position.Z)));
-  }
 };
 
 class BoundingBox
@@ -65,12 +40,16 @@ class Model
 public:
     Model();
     ~Model();
+//    Model(const Model& orig);
+//    Model & operator=(Model other);
+
     const BoundingBox& boundingBox() const;
     bool loadOBJ( const char* Filename, bool FitSize=true);
     bool loadShaders(const char* VertexShader, const char* FragmentShader);
 //    bool loadVertexShader(const char* VertexShader);
 //    bool loadFragmentShader(const char* FragmentShader);
     void draw();
+    void draw(Vector translation, Vector scaling, Vector rotation, GLfloat angle);
     void buffer();
     void drawLines() const;
     void drawTriangles() const;
