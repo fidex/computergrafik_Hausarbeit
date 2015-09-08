@@ -42,11 +42,11 @@ void Object::SetRotationAngle(GLfloat RotationAngle) {
     m_RotationAngle = RotationAngle;
 }
 
-void Object::SetRotationAxis(const Vector& RotationAxis) {
+void Object::SetRotationAxis(Vector RotationAxis) {
     m_RotationAxis = RotationAxis;
 }
 
-void Object::SetTranslation(const Vector& Translation) {
+void Object::SetTranslation(Vector Translation) {
     m_Translation = Translation;
 }
 
@@ -62,14 +62,14 @@ const Vector& Object::GetScaling() const {
     return m_Scaling;
 }
 
-void Object::SetScaling(const Vector& Scaling) {
+void Object::SetScaling(Vector Scaling) {
     m_Scaling = Scaling;
 }
 
 
 
 void Object::addChildObject(Object& Object) {
-    m_Children.push_back(Object);
+    m_Children.insert(std::make_pair(Object.GetName(),Object));
 }
 
 
@@ -77,8 +77,33 @@ void Object::draw() {
     if(m_Model != NULL){
         m_Model->draw(m_Translation, m_Scaling, m_RotationAxis, m_RotationAngle);
     }
-    
-    //Vllt. hier Kinder zeichnen
+    //Draw Children
+    for(auto itr:m_Children){
+        itr.second.draw();
+    }
 }
 
+Object* Object::hasChild(std::string& name) {
+    try{
+       
+        return &(m_Children.at(name));
+    }catch(std::out_of_range& oor){
+        return NULL;
+    }
+}
 
+bool Object::adoption(std::string& parentName, Object& obj) {
+    Object* parent = this->hasChild(parentName);
+    
+    if(parent != NULL){
+        parent->addChildObject(obj);
+        return true;
+    }else{
+        for(auto itr:m_Children){
+            if(itr.second.adoption(parentName, obj)){   //Parent found somewhere
+                return true;
+            }
+        }
+        return false;
+    }
+}

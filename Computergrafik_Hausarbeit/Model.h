@@ -42,6 +42,14 @@ public:
     ~Model();
 //    Model(const Model& orig);
 //    Model & operator=(Model other);
+    
+    std::string getName() const {
+        return name;
+    }
+
+    void setName(std::string name) {
+        this->name = name;
+    }
 
     const BoundingBox& boundingBox() const;
     bool loadOBJ( const char* Filename, bool FitSize=true);
@@ -69,6 +77,7 @@ protected:
     GLuint m_indexBufferID = 0;
     ShaderProgram m_shader;
     BoundingBox m_Box;
+    std::string name;
     bool isBuffered=false;
     bool shaderLoaded=false;
 };

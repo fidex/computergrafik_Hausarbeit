@@ -17,6 +17,7 @@
 
 class Ground {
 public:
+    Ground();
     Ground(GLuint XSize, GLuint ZSize, GLuint maxHeight);
     ~Ground();
     void loadHeightmap(const char* filename);
@@ -26,11 +27,26 @@ public:
     GLuint getMaxHeight() const;
     void setMaxHeight(GLuint maxHeight);
 
+    GLuint getXSize() const {
+        return m_XSize;
+    }
+
+    void setXSize(GLuint XSize) {
+        m_XSize = XSize;
+    }
+
+    GLuint getZSize() const {
+        return m_ZSize;
+    }
+
+    void setZSize(GLuint ZSize) {
+        m_ZSize = ZSize;
+    }
+
 
 private:
     void loadBMP(const char* filename);
     void buffer();
-    void parseIndexData();
     GLfloat interpolateRGB(GLfloat inVal, GLfloat min, GLfloat max);
     GLfloat interpolate(GLfloat inVal, GLfloat minInRange, GLfloat maxInRange, GLfloat minOutRange, GLfloat maxOutRange);
     

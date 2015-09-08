@@ -8,8 +8,9 @@
 #ifndef OBJECT_H
 #define	OBJECT_H
 
+#include <iostream>
 #include <string>
-#include <vector>
+#include <map>
 #include "Model.h"
 #include "Vector.h"
 
@@ -22,15 +23,17 @@ public:
     GLfloat GetRotationAngle() const;
     void SetRotationAngle(GLfloat RotationAngle);
     const Vector& GetRotationAxis() const;
-    void SetRotationAxis(const Vector& RotationAxis);
+    void SetRotationAxis(Vector RotationAxis);
     const Vector& GetTranslation() const;
-    void SetTranslation(const Vector& Translation);
+    void SetTranslation(Vector Translation);
     const Model* GetModel() const;
     void SetModel(Model* model);
     const Vector& GetScaling() const;
-    void SetScaling(const Vector& Scaling);
+    void SetScaling(Vector Scaling);
     
     void addChildObject(Object& Object);
+    Object* hasChild(std::string& name);
+    bool adoption(std::string& parentName, Object& obj);
     void draw();
     
 protected:
@@ -40,7 +43,7 @@ protected:
     Vector m_RotationAxis;
     Vector m_Scaling;
     GLfloat m_RotationAngle;
-    std::vector<Object> m_Children;
+    std::map<std::string, Object> m_Children;
 };
 
 #endif	/* OBJECT_H */

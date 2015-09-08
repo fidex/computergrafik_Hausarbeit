@@ -28,14 +28,14 @@ BoundingBox::BoundingBox( const Vector& min, const Vector& max) : Min(min), Max(
 {
 }
 
-Model::Model() : m_MaterialCount(0), m_VertexCount(0)
+Model::Model() : m_MaterialCount(0), m_VertexCount(0), m_pVertices(NULL)
 {
 
 }
 
 Model::~Model()
 {
-    if( m_pVertices)
+    if( m_pVertices != NULL)
         delete [] m_pVertices;
 }
 
@@ -186,13 +186,13 @@ bool Model::loadOBJ( const char* Filename, bool FitSize)
             
             //Vertex parsen
             v.Position = vertices[vindex];
-            if(!nindex < 0){
+            if(nindex >= 0){
                 v.Normal = normals[nindex];
                 v.hasNormal = true;
             }else{
                 v.hasNormal = false;
             }
-            if(!uvindex < 0){
+            if(uvindex >= 0){
                 v.TexcoordS = uvs[uvindex].s;
                 v.TexcoordT = uvs[uvindex].t;
                 v.hasTexcoords = true;

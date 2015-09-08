@@ -20,6 +20,10 @@ void printVector(const Vector& v){
     std::cout << "x:" << v.X << " y:" << v.Y << " z:" << v.Z << std::endl;
 }
 
+Ground::Ground() {
+
+}
+
 
 Ground::Ground(GLuint XSize, GLuint YSize, GLuint maxHeight):m_XSize(XSize), m_ZSize(YSize), m_MaxHeight(maxHeight)
 {
@@ -52,8 +56,12 @@ void Ground::loadBMP(const char* filename)
     int i;
     FILE* f = fopen(filename, "rb");
 
-    if(f == NULL)
-        throw "Argument Exception";
+    if(f == NULL){
+        std::cout << "Heightmap not found: " << filename << std::endl;
+        return;
+    }
+        
+        //throw "Argument Exception";
 
     unsigned char info[54];
     fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
