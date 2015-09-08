@@ -15,9 +15,13 @@
 #include <pthread.h>
 
 #include "ShaderProgram.h"
+#include "Ground.h"
+#include "Object.h"
+#include "Scene.h"
 
 // Model that should be loaded
 const char* g_ModelToLoad = "testkiste2.obj";
+const char* g_HeightmapToLoad = "sack_rgb.bmp";
 
 // window x and y size
 const unsigned int g_WindowWidth=640;
@@ -34,6 +38,10 @@ ShaderProgram g_Shader;
 
 Camera g_Camera;
 Model g_Model;
+Ground g_Ground(10, 10, 5);
+Object g_Obj;
+Scene g_Scene;
+
 int g_MouseButton = 0;
 int g_MouseState = 0;
 
@@ -81,10 +89,19 @@ int main(int argc, char * argv[])
 //    g_Shader.activate();
 
     
-    g_Model.loadOBJ(g_ModelToLoad);
-    g_Model.loadShaders((g_path+"test.vert").c_str(), (g_path+"test.frag").c_str());
+//    g_Model.loadOBJ(g_ModelToLoad);
+//    g_Model.loadShaders((g_path+"test.vert").c_str(), (g_path+"test.frag").c_str());
+//    g_Obj.SetModel(&g_Model);
+//    g_Obj.SetRotationAngle(30.0);
+//    g_Obj.SetRotationAxis(Vector(1,0,0));
+//    g_Obj.SetTranslation(Vector(-2, 0, 0));
+//    g_Obj.SetScaling(Vector(1,1,1));
+//    g_Ground.loadHeightmap(g_HeightmapToLoad);
+//    g_Ground.loadShaders((g_path+"test.vert").c_str(), (g_path+"test.frag").c_str());
     
-    
+    g_Scene.readSceneFile("test.scene");
+    //GLuint test = 0-1;
+    //std::cout << test << std::endl;
     glutMainLoop();
     
 }
@@ -203,7 +220,11 @@ void DrawScene()
 //    else if(g_RenderMode== RENDERMODE_TRIANGLES){
             
 //    }
-    g_Model.draw(); 
+//    g_Ground.draw();
+//    //g_Model.draw();
+//    g_Obj.draw();
+    
+    g_Scene.drawScene();
     
     glutSwapBuffers();
     glutPostRedisplay();
