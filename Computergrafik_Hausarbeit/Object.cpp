@@ -40,14 +40,23 @@ void Object::SetName(std::string Name) {
 
 void Object::SetRotationAngle(GLfloat RotationAngle) {
     m_RotationAngle = RotationAngle;
+    for(auto itr:m_Children){
+        itr.second.SetRotationAngle(RotationAngle);
+    }
 }
 
 void Object::SetRotationAxis(Vector RotationAxis) {
     m_RotationAxis = RotationAxis;
+    for(auto itr:m_Children){
+        itr.second.SetRotationAxis(RotationAxis);
+    }
 }
 
 void Object::SetTranslation(Vector Translation) {
     m_Translation = Translation;
+    for(auto itr:m_Children){
+        itr.second.SetTranslation(Translation);
+    }
 }
 
 const Model* Object::GetModel() const {
@@ -64,6 +73,9 @@ const Vector& Object::GetScaling() const {
 
 void Object::SetScaling(Vector Scaling) {
     m_Scaling = Scaling;
+    for(auto itr:m_Children){
+        itr.second.SetScaling(Scaling);
+    }
 }
 
 
