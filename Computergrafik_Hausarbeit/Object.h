@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <sstream>
 #include "Model.h"
 #include "Vector.h"
 
@@ -30,16 +31,22 @@ public:
     void SetModel(Model* model);
     const Vector& GetScaling() const;
     void SetScaling(Vector Scaling);
+    void SetParentName(std::string name);
+    std::string GetParentName();
     
     void addChildObject(Object& Object);
     bool adoption(std::string& parentName, Object& obj);
     Object* findObject(std::string& parentName);
+    void getAllObjects(std::vector<Object> &obj);
     void draw();
+    
+    std::string toString() const;
     
 protected:
     
     Object* hasChild(std::string& name);
     std::string m_Name;
+    std::string m_ParentName;
     Model* m_Model = NULL;
     Vector m_Translation;
     Vector m_RotationAxis;

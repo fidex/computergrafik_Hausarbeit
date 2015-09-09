@@ -36,6 +36,7 @@ public:
     void setParameter(GLint ID, const Color& Param);
     void setParameter(GLint ID, const Matrix& Param);
     void setMaterial(Material const &mat);
+    void setLighting();
     
     void activate() const;
     void deactivate() const;

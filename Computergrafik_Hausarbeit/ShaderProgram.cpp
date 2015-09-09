@@ -134,6 +134,14 @@ void ShaderProgram::setParameter(GLint ID, int Param){
     glUniform1i(ID, Param);
 }
 
+void ShaderProgram::setLighting() { 
+    
+    GLint lightPosLoc = glGetUniformLocation(m_ShaderProgram, "LightPos");
+    glUniform3f(lightPosLoc, g_LightPos.X, g_LightPos.Y, g_LightPos.Z);
+    
+}
+
+
 void ShaderProgram::setMaterial(const Material& mat) {
  
     GLint diffCLoc = glGetUniformLocation(m_ShaderProgram, "DiffColor");
@@ -158,7 +166,7 @@ void ShaderProgram::setMaterial(const Material& mat) {
     glUniform3f(ambCLoc, amb.R, amb.G, amb.B);
     glUniform1f(specELoc, shine);
     glUniform3f(lightPosLoc, g_LightPos.X, g_LightPos.Y, g_LightPos.Z);
-    mat.getDiffuseTexture().apply();
+    mat.applyDiffuseTexture();
 
     
 }

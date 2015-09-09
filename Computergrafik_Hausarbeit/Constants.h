@@ -8,11 +8,13 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
-const char* g_TerrainVShader = "./shader/test.vert";
-const char* g_TerrainFShader = "./shader/test.frag";
+const char* g_TerrainVShader = "./shader/terraintest.vert";
+const char* g_TerrainFShader = "./shader/terraintest.frag";
 
 const char* g_ModelVShader = "./shader/test.vert";
 const char* g_ModelFShader = "./shader/test.frag";
+
+
 
 
 #endif	/* CONSTANTS_H */

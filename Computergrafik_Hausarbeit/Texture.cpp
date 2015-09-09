@@ -83,7 +83,7 @@ void Texture::apply() const
     if(m_TextureID==0)
         return;
 
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
 }
 

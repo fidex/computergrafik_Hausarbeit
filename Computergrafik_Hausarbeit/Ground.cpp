@@ -16,6 +16,11 @@
 #define LONG int32_t
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
+
+const char* g_DefaultGroundTexture = "./texture/grass.bmp";
+
+const bool g_DefaultTerrainMaterial = true;
+
 void printVector(const Vector& v){
     std::cout << "x:" << v.X << " y:" << v.Y << " z:" << v.Z << std::endl;
 }
@@ -38,17 +43,30 @@ Ground::~Ground() {
 
 void Ground::loadHeightmap(const char* filename) {
     loadBMP(filename);
+    if(g_DefaultTerrainMaterial){
+        setDefaultMaterial();
+    }
 }
+
+void Ground::loadTexture(const char* filename) {
+    textureLoaded = m_Material.setDiffuseTexture(filename);
+}
+
 
 void Ground::loadShaders(const char* vertexShader, const char* fragmentShader) {
     m_Shader.load(vertexShader, fragmentShader);
     shaderLoaded = true;
 }
 
-//Src: https://en.wikipedia.org/wiki/Linear_interpolation
-//float lerp(float v0, float v1, float t) {
-//  return (1-t)*v0 + t*v1;
-//}
+void Ground::setDefaultMaterial() {
+    m_Material.setDiffuseTexture(g_DefaultGroundTexture);
+    m_Material.setSpecularColor(Color(0.82,0.63,0.03));
+    m_Material.setAmbientColor(Color(0.0,0.0,0.0));
+    m_Material.setDiffuseColor(Color(0.64, 0.03, 0.01));
+    m_Material.setSpecularExponent(96.07);
+}
+
+
 
 // Source: http://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
 void Ground::loadBMP(const char* filename)
@@ -133,6 +151,21 @@ void Ground::loadBMP(const char* filename)
             tmp3.Position = Vector(x+1, pixelValues[z+1][x+1], z+1);
             tmp4.Position = Vector(x+1, pixelValues[z][x+1], z);
             
+            tmp1.Normal = (tmp2.Position-tmp1.Position).cross(tmp4.Position-tmp1.Position);
+            tmp2.Normal = (tmp3.Position-tmp2.Position).cross(tmp1.Position-tmp2.Position);
+            tmp3.Normal = (tmp4.Position-tmp3.Position).cross(tmp2.Position-tmp3.Position);
+            tmp4.Normal = (tmp1.Position-tmp4.Position).cross(tmp3.Position-tmp1.Position);
+            
+            
+            tmp1.TexcoordS = 0.0;
+            tmp1.TexcoordT = 0.0;
+            tmp2.TexcoordS = 1.0;
+            tmp2.TexcoordT = 0.0;
+            tmp3.TexcoordS = 1.0;
+            tmp3.TexcoordT = 1.0;
+            tmp4.TexcoordS = 0.0;
+            tmp4.TexcoordT = 1.0;
+            
 //            std::cout << "Quad:" << std::endl;
 //            printVector(tmp1.Position);
 //            printVector(tmp2.Position);
@@ -146,6 +179,7 @@ void Ground::loadBMP(const char* filename)
             indexData3 = vertexMap.insert(std::make_pair(tmp3, vertexcounter+2));
 
             indexData4 = vertexMap.insert(std::make_pair(tmp4, vertexcounter+3));
+            
             if(indexData1.second){
                 m_Indices.push_back(vertexcounter);
                 vertexcounter++;
@@ -217,12 +251,16 @@ void Ground::draw() {
     glPushMatrix();
     
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(0));
-    //std::cout << "Drawing " << m_Indices.size() << std::endl;
-//    glDrawArrays(GL_TRIANGLES, 0, m_PixelCount);
-    //glColor3f(1.0, 0.0, 0.0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(12));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
+    
+
     if(shaderLoaded){
         m_Shader.activate();
+        m_Shader.setMaterial(m_Material);
     }
     glDrawElements(GL_QUADS, m_Indices.size(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     if(shaderLoaded){
@@ -230,6 +268,8 @@ void Ground::draw() {
     }
     
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
     
     glPopMatrix();
     
@@ -254,4 +294,18 @@ GLfloat Ground::interpolateRGB(GLfloat inVal, GLfloat min, GLfloat max) {
 GLfloat Ground::interpolate(GLfloat inVal, GLfloat minInRange, GLfloat maxInRange, GLfloat minOutRange, GLfloat maxOutRange) {
     GLfloat x = inVal / (maxInRange - minInRange);
     return minOutRange + (maxOutRange - minOutRange) * x;
+}
+
+std::string Ground::toString() const{
+    using std::endl;
+    std::ostringstream oss;
+    oss << "terrain{" << endl 
+            << "\tsize " << m_XSize << " " << m_MaxHeight << " " << m_ZSize << endl
+            << "\theightmap " << m_HMFilename << endl
+            << "\tmixmap " << m_MMFilename << endl
+            << "\tdetailmap1 " << m_DM1Filename << " " << m_DM1TillingU << " " << m_DM1TillingV << endl
+            << "\tdetailmap2 " << m_DM2Filename << " " << m_DM2TillingU << " " << m_DM2TillingV << endl
+            << "}" << endl;
+   
+    return oss.str();
 }

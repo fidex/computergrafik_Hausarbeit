@@ -33,6 +33,11 @@ Model::Model() : m_MaterialCount(0), m_VertexCount(0), m_pVertices(NULL)
 
 }
 
+Model::Model(const Model& orig) {
+    this->m_pVertices = NULL;
+}
+
+
 Model::~Model()
 {
     if( m_pVertices != NULL)
@@ -42,7 +47,7 @@ Model::~Model()
 bool Model::loadOBJ( const char* Filename, bool FitSize)
 {
     clock_t t = clock();
-    
+    m_ObjFilename = std::string(Filename);
     std::ifstream file(Filename);
     std::string line;
     
@@ -367,7 +372,7 @@ void Model::draw(Vector translation, Vector scaling, Vector rotation, GLfloat an
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(12));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24));
     
     glTranslatef(translation.X, translation.Y, translation.Z);
     glRotatef(angle, rotation.X, rotation.Y, rotation.Z);
@@ -581,5 +586,12 @@ void Model::drawTriangles() const
     // Aufgabe 1
 }
 
-
-
+std::string Model::toString() const{
+    using std::endl;
+    std::ostringstream oss;
+        oss << "model " << name << "{" << endl
+            << "\tfile " << m_ObjFilename << endl
+            << "}" << endl;
+        
+    return oss.str();
+}

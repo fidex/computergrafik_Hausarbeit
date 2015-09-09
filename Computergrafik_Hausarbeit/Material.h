@@ -33,8 +33,9 @@ public:
     void setAmbientColor( const Color& color);
     void setSpecularExponent( const float exp);
     void setName( const std::string& name);
-    void setDiffuseTexture( const char* Filename);
+    bool setDiffuseTexture( const char* Filename);
     void setSpecularTexture( const char* Filename);
+    void applyDiffuseTexture() const;
 
 protected:
     Color m_DiffuseColor;

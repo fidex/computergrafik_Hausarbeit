@@ -78,6 +78,14 @@ void Object::SetScaling(Vector Scaling) {
     }
 }
 
+std::string Object::GetParentName() {
+    return m_ParentName;
+}
+
+void Object::SetParentName(std::string name) {
+    m_ParentName = name;
+}
+
 
 
 void Object::addChildObject(Object& Object) {
@@ -127,4 +135,26 @@ Object* Object::findObject(std::string& name) {
         }
         return NULL;
     }
+}
+
+void Object::getAllObjects(std::vector<Object>& objects) {
+    for(auto itr:m_Children){
+        objects.push_back(itr.second);
+        itr.second.getAllObjects(objects);
+    }
+}
+
+
+std::string Object::toString() const{
+    using std::endl;
+    std::ostringstream oss;
+        oss << "object " << m_Name << "{" << endl
+            << "\ttranslation " << m_Translation.X << " " << m_Translation.Y << " " << m_Translation.Z << endl
+            << "\trotation " << m_RotationAxis.X << " " << m_RotationAxis.Y << " " << m_RotationAxis.Z << endl
+            << "\tscaling " << m_Scaling.X << " " << m_Scaling.Y << " " << m_Scaling.Z << endl
+            << "\tmodel " << m_Model->getName() << endl
+            << "\tparent " << m_ParentName << endl
+            << "}" << endl;
+    
+    return oss.str();
 }

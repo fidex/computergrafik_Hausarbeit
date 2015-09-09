@@ -36,8 +36,10 @@ void Scene::addObject(Object obj) {
 }
 
 void Scene::drawScene() {
+
     m_Terrain.draw();
     m_ObjRoot.draw();
+    
 }
 
 void Scene::readSceneFile(const char* filename) {
@@ -72,6 +74,7 @@ void ltrim(std::string& str){
 }
 
 void Scene::parseTerrainBlock(std::vector<std::string>& block) {
+    char filename[255];
     for(std::string line:block){
         ltrim(line);
         if(!line.compare(0, 4,"size")){
@@ -81,18 +84,23 @@ void Scene::parseTerrainBlock(std::vector<std::string>& block) {
             m_Terrain.setZSize(ZSize);
             m_Terrain.setMaxHeight(MaxHeight);
         }else if(!line.compare(0, 9,"heightmap")){
-            char filename[255];
             sscanf(line.c_str(), "%*s %s", filename);
-            m_Terrain.loadHeightmap(filename);
         }else if(!line.compare(0, 6,"mixmap")){
             //Load mixmap
         }else if(!line.compare(0, 10,"detailmap1")){
+            float u,v;
+            sscanf(line.c_str(), "%*s %*s %f %f", &u, &v);
+            m_Terrain.setDM1TillingU(u);
+            m_Terrain.setDM1TillingV(v);
             //Load detailmap1
         }else if(!line.compare(0, 10,"detailmap2")){
             //Load detailmap2
         }
+        
     }
+    m_Terrain.loadHeightmap(filename);
     
+
     //load Terrain Shader
     m_Terrain.loadShaders(g_TerrainVShader, g_TerrainFShader);
     
@@ -164,9 +172,11 @@ void Scene::parseObjectBlock(std::vector<std::string>& block) {
             char parentName[255];
             sscanf(line.c_str(), "%*s %s", parentName);
             if(!strcmp(parentName, "NULL")){
+                obj.SetParentName("NULL");
                 m_ObjRoot.addChildObject(obj);
             }else{
                 std::string name(parentName);
+                obj.SetParentName(name);
                 if(!m_ObjRoot.adoption(name, obj)){
                     std::cout << "Couldn't find parent " << parentName << ". Poor " << obj.GetName() << "." << std::endl;
                 }
@@ -175,22 +185,18 @@ void Scene::parseObjectBlock(std::vector<std::string>& block) {
     }
 }
 
-//bool Scene::adoption(std::string parentName, Object& obj) {
-//    Object* parent = NULL;
-//    for(auto itr:m_Objects){
-//        parent = itr.second.hasChild(parentName);
-//        if(parent != NULL){                             //Parent found
-//            parent->addChildObject(obj);
-//            return true;
-//        }
-//    }
-//    
-//    //No parent found, continue looking in Children
-//    for(auto itr:m_Objects){
-//        if(itr.second.adoption(parentName, obj)){   //Parent found somewhere
-//            return true;
-//        }
-//    }
-//    return false;
-//}
+void Scene::saveSceneFile(const char* filename) {
+    std::ofstream  file;
+    file.open(filename);
+    file << m_Terrain.toString();
+    for (auto it=m_Models.begin(); it!=m_Models.end(); ++it){
+        file << it->second.toString();
+    }
+    std::vector<Object> objects;
+    m_ObjRoot.getAllObjects(objects);
+    for(Object obj:objects){
+        file << obj.toString();
+    }
+    file.close();  
+}
 

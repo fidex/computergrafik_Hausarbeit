@@ -40,8 +40,8 @@ class Model
 public:
     Model();
     ~Model();
-//    Model(const Model& orig);
-//    Model & operator=(Model other);
+    Model(const Model& orig);
+    Model & operator=(Model other);
     
     std::string getName() const {
         return name;
@@ -61,11 +61,13 @@ public:
     void buffer();
     void drawLines() const;
     void drawTriangles() const;
+    std::string toString() const;
 protected:
     void createCube();
     void parseFaceVertex(std::string &line, GLuint *v, GLuint *vt, GLuint *vn);
     void loadMTL(const char* filename);
     bool setMaterial(std::string matName);
+    std::string m_ObjFilename;
     std::unordered_map<std::string, Material> m_pMaterials;
     unsigned int m_MaterialCount;
     Vertex* m_pVertices;

@@ -81,13 +81,16 @@ void Material::setName( const std::string& name)
     m_Name = name;
 }
 
-void Material::setDiffuseTexture( const char* Filename)
+bool Material::setDiffuseTexture( const char* Filename)
 {
-    m_DiffuseTexture.LoadFromBMP(Filename);
+    return m_DiffuseTexture.LoadFromBMP(Filename);
 }
 
 void Material::setSpecularTexture(const char* Filename) {
     m_SpecularTexture.LoadFromBMP(Filename);
 }
 
+void Material::applyDiffuseTexture() const{
+    m_DiffuseTexture.apply();
+}
 
