@@ -60,9 +60,9 @@ void Ground::loadShaders(const char* vertexShader, const char* fragmentShader) {
 
 void Ground::setDefaultMaterial() {
     m_Material.setDiffuseTexture(g_DefaultGroundTexture);
-    m_Material.setSpecularColor(Color(0.82,0.63,0.03));
+    m_Material.setSpecularColor(Color(0.02,0.03,0.03));
     m_Material.setAmbientColor(Color(0.0,0.0,0.0));
-    m_Material.setDiffuseColor(Color(0.64, 0.03, 0.01));
+    m_Material.setDiffuseColor(Color(0.83, 0.83, 0.81));
     m_Material.setSpecularExponent(96.07);
 }
 
