@@ -16,8 +16,6 @@ in vec2 Texcoord;
 
 out vec4 fragColor;
 
-bool funkymode = true;
-
 float sat(float a)
 {
 	return clamp(a, 0.0, 1.0);
@@ -39,12 +37,8 @@ void main()
 	vec3 AmbientComponent = AmbientColor*DiffuseTexColor;
 	
 	fragColor = vec4(DiffuseComponent + SpecularComponent + AmbientComponent, 0.0);
-	//fragColor = vec4(1.0, 0.0, 0.0, 0.0);
-
-	/*if(funkymode){
-		vec3 funkyPos = normalize(Position);
-		fragColor = vec4(0.2, funkyPos.y*255, 0.2, 0.0);
-	}*/
+//	vec3 yay = normalize(Position);
+//	fragColor = vec4(1-yay.y, yay.y*2, 0.0, 0.0);
 
 	/*if(dot(N,L) > 0.0){
         	fragColor = vec4(0.0, 0.0, 1.0, 0.0);
